@@ -22,7 +22,7 @@ import static io.restassured.RestAssured.given;
 @DisplayName("Paths status & titles tests")
 public class PathStatusTests {
     private static final Logger logger = LoggerFactory.getLogger(PathStatusTests.class);
-    private static final String baseUrl = TestConfig.getTestBaseUrl();
+    private static final String baseUrl = TestConfig.testBaseUrl;
 
     @BeforeEach
     void logTestStart(TestInfo testInfo) {

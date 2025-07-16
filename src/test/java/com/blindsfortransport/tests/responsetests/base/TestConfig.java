@@ -1,9 +1,9 @@
 package com.blindsfortransport.tests.responsetests.base;
 
-public class TestConfig {
-    public static final String testBaseUrl = "https://www.blindsfortransport.com";
+import com.blindsfortransport.tests.config.AppConfig;
 
-    public static String getTestBaseUrl() {
-        return testBaseUrl;
-    }
+public class TestConfig extends AppConfig {
+    //public static final String testBaseUrl = "https://www.blindsfortransport.com";
+    public static final String testBaseUrl = baseUrl;
+
 }
