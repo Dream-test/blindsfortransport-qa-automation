@@ -55,4 +55,12 @@ public class CsvDataUtils {
             return null; // либо null — но лучше пустой поток, чтобы тесты просто пропустились
         }
     }
+
+    public static Stream<Arguments> argumentsStream (String dataFilePath) {
+        Stream<Arguments> stream = CsvDataUtils.readUrlsWithStatusFromCsv(dataFilePath);
+        if (stream == null) {
+            throw new RuntimeException("CSV file could not be loaded. Check logs for details.");
+        }
+        return stream;
+    }
 }

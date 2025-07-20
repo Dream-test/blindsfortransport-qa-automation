@@ -1,5 +1,7 @@
 package com.blindsfortransport.tests.responsetests.tests;
 
+import com.blindsfortransport.tests.config.AppConfig;
+import com.blindsfortransport.tests.responsetests.utils.ApiAssertions;
 import io.restassured.RestAssured;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,19 +60,26 @@ public class PathStatusTests {
     @MethodSource("urlStatusProvider")
     void responseShouldReturnExpectedStatus(String url, int expectedStatus) {
         logger.info("GET request for fullUrl: {} expected staus: {}", url, expectedStatus);
+        /*
         given()
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115 Safari/537.36")
                 .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3")
                 .when().get(url)
                 .then().statusCode(expectedStatus);
+         */
+        ApiAssertions.assertStatusCode(url, expectedStatus);
     }
 
     static Stream<Arguments> urlStatusProvider() {
+
+        /*
         Stream<Arguments> stream = CsvDataUtils.readUrlsWithStatusFromCsv("urlsandstatus");
         if (stream == null) {
             throw new RuntimeException("CSV file could not be loaded. Check logs for details.");
         }
         return stream;
+         */
+        return CsvDataUtils.argumentsStream(AppConfig.TEST_URLS_WITH_STATUS_CSV_PATH);
     }
 
     @ParameterizedTest(name = "URL: {0}")
@@ -107,5 +116,19 @@ public class PathStatusTests {
                 .as("Title for URL: %s", url)
                 .isEqualTo(expectedTitle);
 
+    }
+
+    @ParameterizedTest(name = "RU URL: {0}" + TestConfig.ruLang)
+    @CsvFileSource(resources = "/testdata/urls.csv", numLinesToSkip = 1)
+    void responseRuPagesShouldReturn200(String url) {
+        String ruLangUrl = url + TestConfig.ruLang;
+        logger.info("GET request for RU URL: {}", (ruLangUrl));
+        var response = given()
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115 Safari/537.36")
+                .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3")
+                .when()
+                .get(ruLangUrl)
+                .then()
+                .statusCode(200);
     }
 }
