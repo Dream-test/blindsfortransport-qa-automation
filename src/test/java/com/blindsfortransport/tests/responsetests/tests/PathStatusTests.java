@@ -86,6 +86,7 @@ public class PathStatusTests {
     @CsvFileSource(resources = "/testdata/urls.csv", numLinesToSkip = 1)
     void responsePagesShouldReturn200(String url) {
         logger.info("GET request for URL: {}", (url));
+        /*
         var response = given()
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115 Safari/537.36")
                 .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3")
@@ -93,6 +94,8 @@ public class PathStatusTests {
                 .get(url)
                 .then()
                 .statusCode(200);
+         */
+        checkStatusCodeForUrl(url);
     }
 
     @ParameterizedTest(name = "Checking <title> for {0}")
@@ -123,11 +126,33 @@ public class PathStatusTests {
     void responseRuPagesShouldReturn200(String url) {
         String ruLangUrl = url + TestConfig.ruLang;
         logger.info("GET request for RU URL: {}", (ruLangUrl));
+        /*
         var response = given()
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115 Safari/537.36")
                 .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3")
                 .when()
                 .get(ruLangUrl)
+                .then()
+                .statusCode(200);
+         */
+        checkStatusCodeForUrl(ruLangUrl);
+    }
+
+    @ParameterizedTest(name = "EN URL: {0}" + TestConfig.enLang)
+    @CsvFileSource(resources = "/testdata/urls.csv", numLinesToSkip = 1)
+    void responseEnPagesShouldReturn200(String url) {
+        String enLangUrl = url + TestConfig.enLang;
+        logger.info("GET request for EN URL: {}", (enLangUrl));
+
+        checkStatusCodeForUrl(enLangUrl);
+    }
+
+    private void checkStatusCodeForUrl(String url) {
+        given()
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115 Safari/537.36")
+                .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3")
+                .when()
+                .get(url)
                 .then()
                 .statusCode(200);
     }
