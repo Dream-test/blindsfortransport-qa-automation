@@ -30,7 +30,7 @@ public class SitemapToCsv {
             // Handle the case where sitemapIndexUrl might be a direct sitemap, not an index
             if (sitemapLinks.isEmpty()) {
                 logger.warn("No nested sitemaps found in sitemap_index.xml using selector 'sitemap > loc'. Attempting to parse as a direct sitemap.");
-                logger.info("Processing nested SitemapIndex how Sitemap Url: {}", sitemapIndexUrl);
+                logger.info("Processing nested SitemapIndex as Sitemap Url: {}", sitemapIndexUrl);
 
                 /*
                 Elements pageLinks = indexDoc.select("url > loc");
