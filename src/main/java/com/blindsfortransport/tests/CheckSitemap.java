@@ -15,22 +15,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CheckSitemap {
     private static final Logger logger = LoggerFactory.getLogger(CheckSitemap.class);
     private static final String baseUrl = AppConfig.baseUrl;
-
-    /*
-    public static void main(String [] args) {
-        String sitemapIndexUrl = AppConfig.sitemapUrl;
-        logger.info("SitemapIndexUrl: {}", sitemapIndexUrl);
-        Set<String> allUrls = new HashSet<>();
-
-        allUrls = extractUrlsFromSitemap(sitemapIndexUrl);
-    }
-
-     */
 
     public static Set<String> extractUrlsFromSitemap(String url) {
         String sitemapSelector = "sitemap > loc";
@@ -40,7 +31,6 @@ public class CheckSitemap {
         Elements sitemapLinks = extractTags(url, sitemapSelector);
 
         if (sitemapLinks.isEmpty()) {
-            //Elements pageLinks = extractTags(url, urlSelector);
             extractedUrls = extractUrl(extractTags(url, urlSelector));
         } else {
             for (var sitemap : sitemapLinks) {
@@ -51,7 +41,7 @@ public class CheckSitemap {
         return extractedUrls;
     }
 
-    public static Set<String> readUrlsFromCsv(String filePath) {
+    public static Set<String> readLinesFromCsv(String filePath, String fileLine) {
         Set<String> urls = new HashSet<>();
         Path path = Paths.get(filePath);
 
@@ -59,7 +49,7 @@ public class CheckSitemap {
             if (!Files.exists(path)) {
                 logger.warn("File {} does not exist, creating it with header.", filePath);
                 Files.createFile(path);
-                Files.writeString(path, "url\n");
+                Files.writeString(path, fileLine + System.lineSeparator());
             }
 
             try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -83,14 +73,32 @@ public class CheckSitemap {
         return urls;
     }
 
-    public static void appendUrlsToCsv(String filePath, Set<String> newUrls) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            for (String url : newUrls) {
-                writer.write(url);
-                writer.newLine();
-            }
+    public static void appendUrlsToCsv(String urlsFilePath, String urlsAndStatusFilePath, Set<String> newUrls) {
+
+           try (BufferedWriter urlsWriter = new BufferedWriter(new FileWriter(urlsFilePath, true));
+                BufferedWriter statusWriter = new BufferedWriter(new FileWriter(urlsAndStatusFilePath, true))
+           ) {
+               for (String url : newUrls) {
+                   urlsWriter.write(url+ System.lineSeparator());
+
+                   statusWriter.write(url + ",200" + System.lineSeparator());
+               }
         } catch (IOException e) {
-            logger.error("Can not write new urls {} in {} file", newUrls, filePath);
+            logger.error("Failed to write new URLs to files {} and {}. Error:", urlsFilePath, urlsAndStatusFilePath, e);
+        }
+           deleteEmptyLine(urlsFilePath);
+           deleteEmptyLine(urlsAndStatusFilePath);
+    }
+
+    private static void deleteEmptyLine(String filePath) {
+        Path path = Paths.get(filePath);
+        try {
+            List<String> lines = Files.readAllLines(path).stream()
+                    .filter(line -> !line.isBlank())
+                    .collect(Collectors.toList());
+            Files.write(path, lines);
+        } catch (IOException e) {
+            logger.error("Can not read or write file: {}", filePath, e);
         }
     }
 
