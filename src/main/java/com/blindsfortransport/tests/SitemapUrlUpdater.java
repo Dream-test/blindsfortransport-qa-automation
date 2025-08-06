@@ -15,11 +15,11 @@ public class SitemapUrlUpdater {
 
     public static void main(String[] args) {
         //1. Read existing URLs
-        Set<String> existingUrls = CheckSitemap.readLinesFromCsv(filePath, HEADER_URLS);
-        Set<String> existingUrlsAndStatus = CheckSitemap.readLinesFromCsv(AppConfig.URLS_WITH_STATUS_CSV_PATH, HEADER_URLS_WITH_STATUS);
+        Set<String> existingUrls = SitemapProcessor.readLinesFromCsv(filePath, HEADER_URLS);
+        Set<String> existingUrlsAndStatus = SitemapProcessor.readLinesFromCsv(AppConfig.URLS_WITH_STATUS_CSV_PATH, HEADER_URLS_WITH_STATUS);
 
         //2. Extract new URLs from sitemap
-        Set<String> allExtractedUrls = CheckSitemap.extractUrlsFromSitemap(AppConfig.sitemapUrl);
+        Set<String> allExtractedUrls = SitemapProcessor.extractUrlsFromSitemap(AppConfig.sitemapUrl);
 
         //3. Find new URLs
         Set<String> newUrls = new HashSet<>(allExtractedUrls);
@@ -27,7 +27,7 @@ public class SitemapUrlUpdater {
 
         //4. Add to the file (if there are any new ones)
         if (!newUrls.isEmpty()) {
-            CheckSitemap.appendUrlsToCsv(filePath, AppConfig.URLS_WITH_STATUS_CSV_PATH, newUrls);
+            SitemapProcessor.appendUrlsToCsv(filePath, AppConfig.URLS_WITH_STATUS_CSV_PATH, newUrls);
             logger.info("Added {} new URLs to {}.", newUrls.size(), filePath);
             for (String url : newUrls) {
                 logger.info("➕ {}", url);
@@ -39,7 +39,7 @@ public class SitemapUrlUpdater {
         logger.info("Total URLs in {} now must be: {}", filePath, existingUrls.size() + newUrls.size());
 
         // 5. Total
-        Set<String> updatedUrls = CheckSitemap.readLinesFromCsv(filePath, HEADER_URLS);
+        Set<String> updatedUrls = SitemapProcessor.readLinesFromCsv(filePath, HEADER_URLS);
         logger.info("Real total URLs in {} file now: {}", filePath, updatedUrls.size());
 
         // Optional exit code

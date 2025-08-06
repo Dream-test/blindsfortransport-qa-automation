@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CheckSitemap {
-    private static final Logger logger = LoggerFactory.getLogger(CheckSitemap.class);
+public class SitemapProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(SitemapProcessor.class);
     private static final String baseUrl = AppConfig.baseUrl;
 
     public static Set<String> extractUrlsFromSitemap(String url) {

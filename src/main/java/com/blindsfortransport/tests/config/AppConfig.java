@@ -18,13 +18,4 @@ public class AppConfig {
     public static final String TITLES_CSV_PATH = "src/test/resources/testdata/current/urlsandtitles_" + TIMESTAMP + ".csv";
     public static final String TEST_URLS_WITH_STATUS_CSV_PATH = "src/test/resources/testdata/urlsandstatus.csv" ;
 
-    /*
-    public static String getSitemapUrl() {
-        return sitemapUrl;
-    }
-
-    public static String getBaseUrl() {
-        return baseUrl;
-    }
-     */
 }
