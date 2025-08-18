@@ -90,6 +90,34 @@ public class SitemapProcessor {
            deleteEmptyLine(urlsAndStatusFilePath);
     }
 
+    public enum ResourceType {
+        CSS, JS, IMAGE, MEDIA, ALL
+    }
+
+    public static Set<String> extractResources(String pageUrl, ResourceType type) {
+        Set<String> resources = new HashSet<>();
+
+        try {
+            Document document = Jsoup.connect(pageUrl).timeout(5000).get();
+
+            if (type == ResourceType.CSS || type == ResourceType.ALL) {
+                document.select("link[rel=stylesheet]").forEach(element -> resources.add(element.absUrl("href")));
+            }
+            if (type == ResourceType.JS || type == ResourceType.ALL) {
+                document.select("script[src]").forEach(element -> resources.add(element.absUrl("src")));
+            }
+            if (type == ResourceType.IMAGE || type == ResourceType.ALL) {
+                document.select("img[src]").forEach(element -> resources.add(element.absUrl("src")));
+            }
+            if (type == ResourceType.MEDIA || type == ResourceType.ALL) {
+                document.select("source[src], video[src], audio[src]").forEach(element -> resources.add(element.absUrl("src")));
+            }
+        } catch (IOException e) {
+            logger.error("Can not extract {} resources for page: {}", type, pageUrl);
+        }
+        return resources;
+    }
+
     private static void deleteEmptyLine(String filePath) {
         Path path = Paths.get(filePath);
         try {
